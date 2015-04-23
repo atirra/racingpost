@@ -48,11 +48,18 @@ class HorseSpider(scrapy.Spider):
             'text()').extract()[0]
         horsenames = response.xpath('(//table//table//table//table)[1]//td[3]'
             '//a/text()').extract()
-        jb_comment = ''.join(response.xpath('(//font[child::b[text()='
-            '"John Bell"]]//text())[position()>2]').extract())
+
+        horsecodes = response.xpath('(//table//table//table//table)[1]//td[3]//text()[ not(ancestor::a) and preceding::a[contains(@onclick, "MarkYourCard")] ]').extract()
+        #use horse codes to get horsehistory
+        jb_comment = ''.join(response.xpath("(//font[child::b[contains(text(),'Phillip Woo')]]//text())[position()>2]").extract())
+
 
         return items.ScmpHorseItem(
             racename=racename,
             horsenames=horsenames,
             jb_comment=jb_comment,
         )
+
+    ##URL http://racing.scmp.com/racecardpro/HorseHistory/HorseHistory{HORSECODE}.asp    
+    ## http://racing.scmp.com/racecardpro/HorseHistory/HorseHistoryN254.asp
+    
