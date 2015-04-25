@@ -27,7 +27,6 @@ class HkjcHorseItem(scrapy.Item):
 
 class ScmpHorseItem(scrapy.Item):
     racename = scrapy.Field()
-    horsenames = scrapy.Field()
     jb_comment = scrapy.Field()
     horsename = scrapy.Field()
     horsehealth = scrapy.Field()
