@@ -63,7 +63,7 @@ class HorseSpider(scrapy.Spider):
 
         horsecodes = response.xpath('(//table//table//table//table)[1]//td[3]//text()[ not(ancestor::a) and preceding::a[contains(@onclick, "MarkYourCard")] ]').extract()
         #use horse codes to get horsehistory
-        jb_comment = ''.join(response.xpath("(//font[child::b[contains(text(),'Phillip Woo')]]//text())[position()>2]").extract())
+        jb_comment = ''.join(response.xpath("(//font[child::b[contains(text(),'Phillip Woo') or contains(text(),'John Bell')]]//text())[position()>2]").extract())
 
         meta_dict = {
             'racename': racename,
