@@ -79,6 +79,20 @@ class HorseSpider(scrapy.Spider):
             request.meta.update(meta_dict)
             yield request
 
+    @staticmethod
+    def get_td_ind(tr, index):
+
+        ind = 0
+        result_ind = 0
+        for i, td in enumerate(tr.xpath('td'), 1):
+            colspan = td.xpath('self::td/@colspan').extract()
+            ind += colspan and int(colspan[0]) or 1
+            if index <= ind:
+                result_ind = i
+                break
+
+        return result_ind
+
     def parse_horse(self, response):
 
         horsehealth = ''.join(response.xpath('//i[text()="Health : "]/../../text()'
@@ -92,19 +106,19 @@ class HorseSpider(scrapy.Spider):
         prevrun_oddsON = []
         prevrun_oddsLast = []
         line_selector = response.xpath('//td[@nowrap]/font[@face="ARIAL"]/../..')
-        for sel in line_selector:
-            prevrun_date_str = sel.xpath('td[1]//a/text()').extract()[0]
+        get_td_text = lambda tr, ind: tr.xpath('td[{}]//font/text()'.format(
+            self.get_td_ind(tr, ind))).extract()[0]
+        for tr in line_selector:
+            prevrun_date_str = tr.xpath('td[1]//a/text()').extract()[0]
             prevrun_date_ = datetime.strptime(prevrun_date_str, '%d-%m-%y')
             if prevrun_date_ < response.meta['racedate']:
                 prevrun_date.append(prevrun_date_)
-                prevrun_dist.append(sel.xpath('td[4]//font/text()').extract()[0])
-                prevrun_sectimes.append(sel.xpath('td[17]/font/text()').extract()[0])
-                prevrun_horsewt.append(sel.xpath('td[8]/font/text()').extract()[0])
-                prevrun_rt.append(sel.xpath('td[22]/font/text()').extract()[0])
-                prevrun_oddsON.append((sel.xpath('td[23]//font/text()').extract() or
-                    sel.xpath('td[21]//font/text()').extract())[0])
-                prevrun_oddsLast.append((sel.xpath('td[24]//font/text()').extract() or
-                    sel.xpath('td[22]//font/text()').extract())[0])
+                prevrun_dist.append(get_td_text(tr, 4))
+                prevrun_sectimes.append(get_td_text(tr, 17))
+                prevrun_horsewt.append(get_td_text(tr, 21))
+                prevrun_rt.append(get_td_text(tr, 22))
+                prevrun_oddsON.append(get_td_text(tr, 23))
+                prevrun_oddsLast.append(get_td_text(tr, 24))
 
         return items.ScmpHorseItem(
             racename=response.meta['racename'],
