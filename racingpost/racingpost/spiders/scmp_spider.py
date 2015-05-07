@@ -77,17 +77,18 @@ class HorseSpider(scrapy.Spider):
         url_mask = 'http://racing.scmp.com/racecardpro/HorseHistory/HorseHistory{}.asp'
         code_regexp = r'^ \((?P<code>\w+)\)$'
         log.msg('*********************************************************', level=log.INFO)
-        log.msg(horsecodes, level=log.INFO)
-        log.msg(horsenames, level=log.INFO)
+        log.msg(str(horsecodes), level=log.INFO)
+        log.msg(str(horsenames), level=log.INFO)
         HorseSpider.count_all_horse_requests += len(zip(horsecodes, horsenames))
         log.msg('HorseSpider.count_all_horse_requests', level=log.INFO)
-        log.msg(HorseSpider.count_all_horse_requests, level=log.INFO)
+        log.msg(str(HorseSpider.count_all_horse_requests), level=log.INFO)
         for code_dirty, horsename in zip(horsecodes, horsenames):
             meta_dict['horsename'] = horsename
             code = re.match(code_regexp, code_dirty).groupdict()['code']
             self.code_set.add(code)
             log.msg('-------------------------------------------------', level=log.INFO)
-            log.msg(('code_set', len(self.code_set)), level=log.INFO)
+            log.msg('code_set', level=log.INFO)
+            log.msg(str(len(self.code_set)), level=log.INFO)
             request = scrapy.Request(url_mask.format(code), callback=self.parse_horse)
             request.meta.update(meta_dict)
             yield request
@@ -110,7 +111,8 @@ class HorseSpider(scrapy.Spider):
 
         
         HorseSpider.count_unique_horse_request += 1
-        log.msg(('HorseSpider.count_unique_horse_request', HorseSpider.count_unique_horse_request), level=log.INFO)
+        log.msg('HorseSpider.count_unique_horse_request', level=log.INFO)
+        log.msg(str(HorseSpider.count_unique_horse_request), level=log.INFO)
 
         horsehealth = ''.join(response.xpath('//i[text()="Health : "]/../../text()'
             ).extract())
