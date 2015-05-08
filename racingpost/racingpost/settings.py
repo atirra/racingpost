@@ -15,3 +15,5 @@ NEWSPIDER_MODULE = 'racingpost.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'racingpost (+http://www.yourdomain.com)'
+
+DUPEFILTER_CLASS = 'racingpost.utils.DoNotFilter'
